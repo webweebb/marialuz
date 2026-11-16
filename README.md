@@ -1,25 +1,33 @@
 # María Luz · Gestão de ensaios
 
-Painel em português com pedidos, pesquisa, filtros, responsáveis e checklist obrigatório para finalizar. Telefone em texto, sem link ou botão de WhatsApp.
+O sistema ativo usa Google Apps Script para o painel e Google Sheets para armazenar os pedidos. Supabase não é necessário.
 
-## Ativar para a equipe
+## Acesso
 
-1. Crie um projeto em https://supabase.com. Execute `supabase.sql` uma vez no SQL Editor do projeto novo.
-2. Em Authentication, desative o cadastro público. Crie os usuários da administração e do suporte em Users, com e-mail e senha. Não use contas de clientes.
-3. Para cada usuário, copie o UUID e execute no SQL Editor: `insert into public.team_members (user_id) values ('UUID-DO-USUARIO');`.
-4. Em Project Settings / API, copie a Project URL e a chave **publishable** ou **anon**. Nunca use uma chave secret/service_role no site.
-5. Publique os arquivos em uma hospedagem estática. No GitHub: Settings → Pages → Deploy from a branch → main → / (root). Se Pages não estiver disponível, use uma hospedagem compatível, como Vercel.
-6. Abra o endereço publicado, clique em **Conexão**, preencha a URL e a chave pública e entre com seu usuário. Faça a mesma configuração no navegador de cada pessoa da equipe.
-7. Para revogar acesso, remova o UUID de `team_members` pelo painel do banco.
+Abra o sistema: https://script.google.com/macros/s/AKfycbxv9Cx8EHz6Md_P2xTBFOMsNQ_rlKR0Rb1Y9y4-UoSVK55FwEowF1ZBPqzfm52ABxx69Q/exec
 
-Não coloque senhas ou pedidos reais no repositório. O banco exige autenticação e autorização em `team_members`; todo membro autorizado pode consultar, criar e editar os pedidos. Não há exclusão de pedidos pela interface. A identidade da última alteração fica registrada no banco em `updated_by`. Os responsáveis pela produção e revisão têm a opção Albert predefinida. Essa opção não cria uma conta: o acesso precisa ser cadastrado e autorizado no Supabase.
+A implantação está restrita à conta Google proprietária. Você e Albert precisam estar conectados à mesma conta autorizada para usar esse endereço. A página index.html deste repositório tem um botão para abrir o sistema.
 
 ## Uso
 
-Cadastre data, telefone, quantidade, temas, álbum do Google Fotos e instruções. Nome de identificação, valor e moeda foram retirados da interface. Os campos antigos permanecem no banco para compatibilidade e preservação dos pedidos existentes; novos pedidos usam valores técnicos neutros nesses campos. Acompanhe os quatro status. Para finalizar, marque os sete itens e confira o revisor Albert. O banco também valida essa regra. Alterações simultâneas no mesmo pedido são recusadas por controle de versão; atualize e reabra para conferir a alteração da outra pessoa. Clique em Atualizar para buscar alterações da equipe.
+1. Clique em Novo ensaio e preencha data, telefone, quantidade de fotos, temas, link do Google Fotos e instruções.
+2. Albert já está selecionado na produção e revisão. Não há valor, moeda, identificação do bebê ou botão de WhatsApp.
+3. Acompanhe os status Pendente, Em produção, Em revisão e Finalizado.
+4. Para finalizar, marque os sete itens do checklist. O servidor também exige essa verificação.
+5. Use Atualizar para buscar alterações feitas pela outra pessoa.
 
-O modo de teste local funciona sem conta; grava apenas no navegador atual. Ele não compartilha pedidos e não migra dados de teste para o banco. O login real mantém a sessão somente na memória: ao recarregar ou fechar a página será necessário entrar novamente. A conexão pública é lembrada neste navegador.
+## Armazenamento
 
-## Validação
+Os pedidos são gravados na aba Pedidos do sistema da planilha selecionada. Edite pedidos pelo painel; a última coluna oculta guarda os dados utilizados pelo sistema e não deve ser alterada. As outras abas não são usadas pelo painel. Não há migração automática de dados do antigo modo local ou Supabase.
 
-Sintaxe do JavaScript e verificações estáticas executadas antes do envio. A conexão real, políticas SQL e login precisam ser validados no projeto Supabase após sua configuração; nenhum projeto ou usuário Supabase foi criado automaticamente.
+O servidor usa bloqueio de gravação e versão por pedido para impedir que alterações concorrentes sobrescrevam silenciosamente outro trabalho. Não há exclusão pela interface.
+
+## Código e manutenção
+
+Os arquivos em apps-script/ são a base do aplicativo. O ID da planilha foi omitido do modelo público do servidor. A cópia configurada está no projeto privado do Apps Script. Alterações no GitHub não atualizam automaticamente o Apps Script: edite os arquivos no projeto e atualize a implantação existente.
+
+supabase.sql é uma alternativa antiga e não precisa ser executado para usar a versão atual.
+
+## Verificação
+
+Painel publicado e conectado. Cadastro fictício salvo, recuperado após recarregar e atualizado para Finalizado. Finalização com checklist incompleto bloqueada. Pedido fictício removido após a validação.
